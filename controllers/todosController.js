@@ -69,7 +69,7 @@ const updateTodo = asyncHandler(async(req, res, next) => {
 
     // make sure the logged in user matches the todo user
     if(found.user.toString() !== req.user.id){
-        res.status(400);
+        res.status(401);
         throw new Error("Not Authorized");
     }
     const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, req.body, {new: true});
@@ -94,7 +94,7 @@ const deleteTodo = asyncHandler(async(req, res) => {
 
     // make sure the logged in user matches the todo user
     if(found.user.toString() !== req.user.id){
-        res.status(400);
+        res.status(401);
         throw new Error("Not Authorized");
     }
 
