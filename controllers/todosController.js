@@ -43,12 +43,14 @@ const createTodo = asyncHandler(async(req, res) => {
 // @acess       Public
 const updateTodo = asyncHandler(async(req, res, next) => {
     // check todo
+    let found;
     try {
-        await Todo.findById(req.params.id);
+        found = await Todo.findById(req.params.id);
     } catch (error) {
         throw new Error(`Todo Not Found`)
     }
 
+    // check text field
     if(!req.body.text){
         res.status(400);
         throw new Error("No Text");}
@@ -58,7 +60,12 @@ const updateTodo = asyncHandler(async(req, res, next) => {
         res.status(400); 
         throw new Error("Only Text Fields");
     }
-    // res.status(200).json(foundTodo);
+
+    // check n update the todo
+    if(!found){
+        res.status(400)
+        throw new Error("Todo Not Found");
+    }
     const updatedTodo = await Todo.findByIdAndUpdate(req.params.id, req.body, {new: true});
     res.status(200).json(updatedTodo);
 })
@@ -67,13 +74,18 @@ const updateTodo = asyncHandler(async(req, res, next) => {
 // @route       Delete /api/todos
 // @acess       Public
 const deleteTodo = asyncHandler(async(req, res) => {
+    let found;
     try {
-        await Todo.findByIdAndRemove(req.params.id)
-        res.status(200).json(req.params.id)
+        found = await Todo.findById(req.params.id)
     } catch (error) {
         res.status(400)
         throw new Error("Todo Not Found");
     }
+    if(!found){
+        res.status(400)
+        throw new Error("Todo Not Found")
+    }
+    res.status(200).json(req.params.id);
 })
 
 
